@@ -38,6 +38,9 @@ macOS catches portability bugs and teaches its own durability lessons
 (`F_FULLFSYNC`, 16 KiB pages). Linux is where io_uring, `O_DIRECT`,
 dm-flakey, and block-layer tracing live.
 
+On a Linux machine, the VM box *is* your machine: skip Lima, build in
+place. See [Running on native Linux](#11-running-on-native-linux).
+
 ---
 
 ## 2. Lima: a Linux VM for your Mac
@@ -99,6 +102,7 @@ What the provision script installs, and which part of the course uses it:
 | `util-linux e2fsprogs xfsprogs` | `losetup`, `mkfs.ext4/ext2/xfs`, `dmsetup` for dm-flakey (lab 02) |
 | `gdb valgrind` | debugging |
 | `rsync` | `tools/vm_sync.sh` |
+| `ripgrep` | `todo_report.sh` and the gate's TODO count |
 
 ### Why not build on the mount?
 
@@ -271,3 +275,53 @@ Other agents that read `AGENTS.md` (many do) get tutor mode automatically.
 For a plain chat model, paste `AGENTS.md` and
 `.cursor/rules/strata-tutor.mdc`, then the relevant `SKILL.md`. For no AI
 at all, see "Working without any AI" in [`course-guide.md`](course-guide.md).
+
+---
+
+## 11. Running on native Linux
+
+Everything works on a Linux machine, with no VM. The Lima VM is plain
+Ubuntu 24.04, so native Ubuntu 24.04 runs the exact same setup. Tested
+there: strict (`-Werror`) builds with GCC 13 (Ubuntu's default) and GCC 14,
+the io_uring backend and labs, `todo_report.sh`, and `check_milestone.sh`.
+
+**Install** (Ubuntu 24.04 or newer; the same list the VM provisions):
+
+```bash
+sudo apt install build-essential cmake ninja-build pkg-config git ripgrep \
+                 liburing-dev                                    # required
+sudo apt install gcc-14 g++-14 clang-18 clang-tidy-18 \
+                 fio strace ltrace sysstat blktrace bpftrace gdb valgrind \
+                 util-linux e2fsprogs xfsprogs \
+                 linux-tools-common "linux-tools-$(uname -r)"    # labs, --tidy
+```
+
+Then build in place, straight from your clone:
+
+```bash
+cmake --preset debug && cmake --build --preset debug
+ctest --preset debug -L harness      # green from day one
+tools/check_milestone.sh M1
+```
+
+Ignore `lima/` and `tools/vm_sync.sh`. When a doc says "inside the VM",
+read it as "in your terminal".
+
+**Requirements:** CMake ≥ 3.25, and GCC ≥ 13 or clang ≥ 18 (for C++23
+`std::expected`). Ubuntu 22.04 ships CMake 3.22 and GCC 11/12, so there you
+need a newer CMake (Kitware's apt repo, or `pip install cmake`) and GCC 13
+(the `ubuntu-toolchain-r/test` PPA). Other distros (Fedora, Arch, Debian 13)
+have new enough packages under similar names. They're untested.
+
+**What's different from the Mac setup:**
+
+| | |
+|---|---|
+| **Better** | latency numbers are real: `fsync`, `O_DIRECT`, and `fio` hit your actual disk, with no hypervisor in between. Your topic 07 and 09 results mean more than the VM's |
+| **Lost** | the macOS half of the comparisons: `F_FULLFSYNC` vs `fsync` (topic 07, the M1 demo), `fs_usage`, 16 KiB pages, APFS. Read those parts, and treat the macOS numbers in the text as given. You still write the `__APPLE__` branches (M1's `SyncFd`, lab 07), but your machine never compiles them, so have a reviewer (or a Mac CI runner) check them |
+| **Careful** | labs 02 (dm-flakey), 05 (`bpftrace`), and 06 (`drop_caches`) need `sudo`. Run dm-flakey only on a **loop device over a scratch file**, as the lab says, never on a real disk. On a laptop, the fsync benchmarks wear your SSD a little. That's fine, but don't loop them for hours |
+| **Check** | io_uring can be disabled by policy: `sysctl kernel.io_uring_disabled` should print 0 (the setting doesn't exist before kernel 6.6, which is fine). Containers often block it too (Docker's default seccomp profile) |
+
+**Windows:** WSL2 runs Ubuntu, so the steps above should work there
+(build under `~`, not `/mnt/c`). Untested; dm-flakey and `perf` may not
+be available in WSL2's kernel.

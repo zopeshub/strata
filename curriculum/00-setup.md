@@ -2,6 +2,11 @@
 
 **Time:** ~45 min (mostly waiting on the VM's first boot). **Feeds:** M0.
 
+> **On a Linux machine?** Skip Lima entirely. See
+> [`docs/framework.md` → Running on native Linux](../docs/framework.md#11-running-on-native-linux)
+> for the packages to install. Read the concept section below anyway: it's
+> the "why" behind the macOS comparisons you'll have to take on faith.
+
 ## Concept: why two operating systems?
 
 The engine is portable POSIX C++ and develops fine on macOS. Several storage

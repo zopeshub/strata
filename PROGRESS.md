@@ -12,7 +12,8 @@ last. Keep entries short, dated, and factual.
   do the M0 checks in `docs/roadmap.md`. Then read `curriculum/00-setup.md`,
   `01-filesystems.md`, and `07-fsync-semantics.md`, and do
   `/strata-checkpoint 01`.
-- **Last session:** 2026-09-24: scaffold created (milestone 0 commit).
+- **Last session:** 2026-09-24: scaffold created (milestone 0 commit); docs
+  added (primer, course guide, framework incl. native Linux + OpenCode).
 
 ## Milestones
 

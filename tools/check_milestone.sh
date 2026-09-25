@@ -21,6 +21,7 @@ fi
 M="$1"; shift
 N="${M#M}"
 [[ "$N" =~ ^[1-8]$ ]] || { echo "milestone must be M1..M8"; exit 2; }
+command -v rg >/dev/null || { echo "needs ripgrep (brew install ripgrep / apt install ripgrep)"; exit 2; }
 ASAN=0; TSAN=0; TIDY=0
 for a in "$@"; do
   case "$a" in
