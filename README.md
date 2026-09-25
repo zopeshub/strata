@@ -16,6 +16,14 @@ principles as a learning and showcase project:
 > benchmarks are in place. The engine is implemented milestone by
 > milestone; see [`PROGRESS.md`](PROGRESS.md) and [`docs/roadmap.md`](docs/roadmap.md).
 
+**New here?** Read these in order:
+
+1. [`docs/lsm-primer.md`](docs/lsm-primer.md): what an LSM tree is and why
+   it's built this way (30 min).
+2. [`docs/course-guide.md`](docs/course-guide.md): how the curriculum,
+   milestones, tests, hints, and tutor fit together.
+3. [`docs/roadmap.md`](docs/roadmap.md): start at M0.
+
 ## Architecture
 
 ```

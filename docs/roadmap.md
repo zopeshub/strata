@@ -32,6 +32,7 @@ Time estimates assume focused evenings. They're guesses; track your actuals in `
 
 - **State:** everything builds; only the harness tests pass; everything else
   fails with `TODO(Mx) not implemented: ...`.
+- **Read first:** `docs/lsm-primer.md` and `docs/course-guide.md`.
 - **Do:** `cmake --preset debug && cmake --build --preset debug && ctest --preset debug -L harness`.
   Set up the Lima VM (`curriculum/00-setup.md`) and build there too.
 - **Demo:** `ctest -L harness` green; `lab05_io_path_probe sync` runs on both

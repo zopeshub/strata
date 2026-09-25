@@ -6,9 +6,11 @@ last. Keep entries short, dated, and factual.
 ## Now
 
 - **Current milestone:** M1 (not started)
-- **Next step:** the M0 checks in `docs/roadmap.md` (build, harness tests,
-  Lima build), then read `curriculum/00-setup.md`, `01-filesystems.md`, and
-  `07-fsync-semantics.md`, and do `/strata-checkpoint 01`.
+- **Next step:** set your git identity (`git config user.name` /
+  `user.email`). Read `docs/lsm-primer.md` and `docs/course-guide.md`, then
+  do the M0 checks in `docs/roadmap.md`. Then read `curriculum/00-setup.md`,
+  `01-filesystems.md`, and `07-fsync-semantics.md`, and do
+  `/strata-checkpoint 01`.
 - **Last session:** 2026-09-24: scaffold created (milestone 0 commit).
 
 ## Milestones
@@ -58,7 +60,11 @@ _(none: keep it that way)_
 Questions the tutor asked that are still unanswered, or things the learner
 wants to come back to.
 
-_(none yet)_
+- (2026-09-24) Tutor's warm-up question, unanswered: with a move ctor
+  that isn't `noexcept`, what does `std::vector<FileDescriptor>` do on
+  reallocation, and what's the observable effect? How would a test prove it?
+- (2026-09-24) Tutor's question for topic 07: on macOS, what has `fsync()`
+  returning 0 actually promised?
 
 ## Tutor observations
 
