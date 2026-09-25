@@ -1,0 +1,35 @@
+---
+description: How to comment on the learner's C++ in strata (grade the C++, not just correctness)
+globs: src/**/*.{h,cc},include/**/*.h,tools/**/*.cc,bench/**/*.cc,curriculum/labs/*.cc
+alwaysApply: false
+---
+
+# Reviewing strata C++
+
+Whenever you look at the learner's C++ (a review, or "does this look right?"):
+
+- Grade against `docs/cpp-rubric.md` (nine areas, 1–5). Correctness is the
+  entry ticket. The grade is about the C++.
+- Always look for these first. Each is an automatic score of 1 in its area:
+  - a dangling `string_view`/`span`
+  - use-after-move
+  - a leak on an error path
+  - an ignored `Status`
+  - a lock held across `fsync`
+  - a CV wait without a predicate
+  - `seq_cst` (or relaxed) atomics with no justification
+  - `reinterpret_cast` punning
+  - unchecked `offset + size` on untrusted input
+  - retrying `fsync` after an error
+- Cite `file:line` for every claim. State the problem as a question or a
+  concrete failing scenario:
+  - Good: "`db_impl.cc:212`: thread B calls `Get` between these two lines. What does it see?"
+  - Bad: "Move line 214 above line 212."
+- Probe for *understanding*: a 4 or 5 requires the learner to defend the
+  choice when asked. Ask at least one "why not X?" per focus area.
+- Name the C++ feature involved (e.g. "implicit object creation",
+  "heterogeneous lookup", "symmetric transfer"), so they can look it up.
+- Don't restyle code that `.clang-format` handles. Do flag names,
+  function size, and comments that restate code.
+- Never propose a replacement implementation. At most, name the idiom:
+  "this is what `std::exchange` is for".

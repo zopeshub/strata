@@ -1,0 +1,64 @@
+# Lima VM for the Linux-only labs: io_uring, O_DIRECT, dm-flakey power-loss
+# simulation, blktrace, bpftrace, perf, /proc/sys/vm/drop_caches.
+#
+#   limactl start --name=strata lima/strata.yaml     # first boot (~5 min)
+#   limactl shell strata                             # get a shell
+#   limactl stop strata                              # when done (frees RAM)
+#
+# IMPORTANT for storage experiments: the host workspace is mounted via
+# virtiofs. Do NOT run fsync/page-cache/O_DIRECT experiments on that mount;
+# its durability semantics are the host's, filtered through a FUSE-like layer.
+# Build and experiment under the VM's own ext4 disk instead, e.g.:
+#   limactl shell strata tools/vm_sync.sh      # from the repo dir on the Mac -> ~/strata in the VM
+# (see curriculum/00-setup.md).
+
+vmType: vz
+images:
+  - location: "https://cloud-images.ubuntu.com/releases/noble/release/ubuntu-24.04-server-cloudimg-arm64.img"
+    arch: "aarch64"
+  - location: "https://cloud-images.ubuntu.com/releases/noble/release/ubuntu-24.04-server-cloudimg-amd64.img"
+    arch: "x86_64"
+
+cpus: 4
+memory: "6GiB"
+disk: "40GiB"
+
+mounts:
+  - location: "~/Documents/cursor_workspace"
+    writable: true
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update
+      apt-get install -y --no-install-recommends \
+        build-essential gcc-14 g++-14 clang-18 clang-tidy-18 lld-18 \
+        cmake ninja-build git pkg-config rsync \
+        liburing-dev fio strace ltrace sysstat blktrace \
+        bpftrace gdb valgrind util-linux e2fsprogs xfsprogs \
+        python3 python3-pip
+      apt-get install -y "linux-tools-$(uname -r)" linux-tools-common || true
+      update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 140 \
+                          --slave /usr/bin/g++ g++ /usr/bin/g++-14
+      # Let the default user read perf counters and trace without sudo.
+      echo 'kernel.perf_event_paranoid = 1' > /etc/sysctl.d/99-strata.conf
+      sysctl --system
+
+probes:
+  - description: "toolchain installed"
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      if ! timeout 900s bash -c "until command -v g++-14 >/dev/null && command -v cmake >/dev/null && test -e /usr/include/liburing.h; do sleep 5; done"; then
+        echo >&2 "toolchain not installed yet"
+        exit 1
+      fi
+    hint: "See /var/log/cloud-init-output.log inside the VM"
+
+message: |
+  strata lab VM ready.  Shell:  limactl shell strata
+  Copy the repo onto the VM disk before storage experiments:
+    limactl shell strata tools/vm_sync.sh   (from the repo dir on the Mac)

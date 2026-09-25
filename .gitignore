@@ -1,0 +1,15 @@
+/build/
+/out/
+.cache/
+compile_commands.json
+CMakeUserPresets.json
+
+# Benchmark scratch output (keep curated results in bench/results/)
+/bench/results/*.json
+!/bench/results/.gitkeep
+
+# Editor / OS
+.DS_Store
+*.swp
+.idea/
+.vscode/

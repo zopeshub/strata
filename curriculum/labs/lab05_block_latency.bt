@@ -1,0 +1,28 @@
+#!/usr/bin/env bpftrace
+// Lab 05: block-layer I/O latency and size, per device, while you run the
+// probe. Linux only (Lima VM):  sudo bpftrace curriculum/labs/lab05_block_latency.bt
+//
+// block_rq_issue: request handed to the device driver
+// block_rq_complete: device says it's done
+// The difference is device (plus driver) latency; compare it with what
+// lab05_io_path_probe sees for fsync. The gap is the kernel's share.
+
+tracepoint:block:block_rq_issue
+{
+  @start[args->dev, args->sector] = nsecs;
+  @issue_bytes = hist(args->bytes);
+  @ops[args->rwbs] = count();
+}
+
+tracepoint:block:block_rq_complete
+/@start[args->dev, args->sector]/
+{
+  @usecs = hist((nsecs - @start[args->dev, args->sector]) / 1000);
+  delete(@start[args->dev, args->sector]);
+}
+
+END
+{
+  clear(@start);
+  printf("\nrwbs flags: W=write, S=sync, F=flush (FLUSH CACHE), FUA=forced unit access\n");
+}

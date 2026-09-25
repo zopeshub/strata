@@ -1,0 +1,85 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": { "CMAKE_EXPORT_COMPILE_COMMANDS": "ON" }
+    },
+    {
+      "name": "debug",
+      "inherits": "base",
+      "displayName": "Debug (day-to-day development)",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "release",
+      "inherits": "base",
+      "displayName": "Release with debug info (benchmarks, profiling)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-O2 -g -DNDEBUG -fno-omit-frame-pointer"
+      }
+    },
+    {
+      "name": "asan",
+      "inherits": "base",
+      "displayName": "Debug + AddressSanitizer + UndefinedBehaviorSanitizer",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "STRATA_SANITIZE": "address;undefined",
+        "STRATA_BUILD_BENCH": "OFF"
+      }
+    },
+    {
+      "name": "tsan",
+      "inherits": "base",
+      "displayName": "RelWithDebInfo + ThreadSanitizer",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "STRATA_SANITIZE": "thread",
+        "STRATA_BUILD_BENCH": "OFF"
+      }
+    },
+    {
+      "name": "strict",
+      "inherits": "base",
+      "displayName": "Debug, -Werror, -Wconversion (the C++ review gate)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "STRATA_WERROR": "ON",
+        "STRATA_STRICT": "ON",
+        "STRATA_BUILD_BENCH": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug",   "configurePreset": "debug" },
+    { "name": "release", "configurePreset": "release" },
+    { "name": "asan",    "configurePreset": "asan" },
+    { "name": "tsan",    "configurePreset": "tsan" },
+    { "name": "strict",  "configurePreset": "strict" }
+  ],
+  "testPresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "output": { "outputOnFailure": true, "shortProgress": true },
+      "execution": { "noTestsAction": "error", "jobs": 8, "timeout": 300 }
+    },
+    { "name": "debug",   "inherits": "base", "configurePreset": "debug" },
+    { "name": "release", "inherits": "base", "configurePreset": "release" },
+    {
+      "name": "asan", "inherits": "base", "configurePreset": "asan",
+      "environment": { "ASAN_OPTIONS": "abort_on_error=1:strict_string_checks=1", "UBSAN_OPTIONS": "print_stacktrace=1" }
+    },
+    {
+      "name": "tsan", "inherits": "base", "configurePreset": "tsan",
+      "environment": { "TSAN_OPTIONS": "halt_on_error=1:second_deadlock_stack=1" }
+    },
+    { "name": "strict",  "inherits": "base", "configurePreset": "strict" }
+  ]
+}
