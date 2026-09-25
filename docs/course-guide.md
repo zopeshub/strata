@@ -27,7 +27,11 @@ graded as seriously as the correctness.
 | **Rubric** | `docs/cpp-rubric.md` | nine C++ areas scored 1–5; the milestone's focus areas must reach 4 |
 | **Tools** | `tools/`, `bench/` | dumpers, CLI, crash tester, benchmarks: how you *show* it works |
 | **Progress** | `PROGRESS.md` | your state: milestone, checkpoints, hints used, demos, reviews |
-| **Tutor** | `.cursor/` | AI tutor rules and skills; `.cursor/tutor/` is tutor-only (don't read) |
+| **Tutor** | `.cursor/`, `.opencode/`, `opencode.json` | AI tutor rules and skills (Cursor native; OpenCode forwards to the same files); `.cursor/tutor/` is tutor-only (don't read) |
+
+How the tooling underneath works (the Lima VM, presets, `MemFileSystem`,
+tracing tools, and which agents can run the tutor) is covered in
+[`framework.md`](framework.md).
 
 ## The loop (every milestone)
 
@@ -80,7 +84,9 @@ truly want code, say "tutor override". It'll comply, log it in
 | `/strata-review M<n>` | the gate passes and the demo is done |
 
 The tutor's memory is `PROGRESS.md`, not the chat. Any model in any session
-can pick up where the last one stopped.
+can pick up where the last one stopped. The same four commands work in
+[OpenCode](https://opencode.ai) (run `opencode` from `strata/`); see
+[`framework.md`](framework.md#10-the-ai-tutor-layer).
 
 ## Working without any AI
 

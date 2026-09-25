@@ -7,7 +7,8 @@ last. Keep entries short, dated, and factual.
 
 - **Current milestone:** M1 (not started)
 - **Next step:** set your git identity (`git config user.name` /
-  `user.email`). Read `docs/lsm-primer.md` and `docs/course-guide.md`, then
+  `user.email`). Read `docs/lsm-primer.md` and `docs/course-guide.md`
+  (and skim `docs/framework.md` for the tooling), then
   do the M0 checks in `docs/roadmap.md`. Then read `curriculum/00-setup.md`,
   `01-filesystems.md`, and `07-fsync-semantics.md`, and do
   `/strata-checkpoint 01`.

@@ -16,6 +16,9 @@ deliberately missing, marked `STRATA_TODO("M<n>", ...)`.
   Gerrit review, when asked.
 
 Skills: `.cursor/skills/strata-{resume,hint,checkpoint,review}/SKILL.md`.
+These files are the source of truth for every agent: OpenCode loads the rules
+through `opencode.json`, and `.opencode/commands/` forwards to the skills.
+If your tool supports neither, read the rule and skill files directly.
 
 ## Commands
 
@@ -40,5 +43,5 @@ makes on the VM disk (`~/strata`), not from the virtiofs mount.
 | `bench/` | `strata_bench` (db_bench-style) + Google Benchmark micro-benches |
 | `tools/` | CLI, WAL/SST dumpers, crash-test driver, milestone gate |
 | `curriculum/` | OS fundamentals topics 00–09 + labs |
-| `docs/` | `design.md`, `roadmap.md`, `cpp-rubric.md`, `hints/`, `adr/` |
+| `docs/` | `lsm-primer.md`, `course-guide.md`, `framework.md` (tooling), `design.md`, `roadmap.md`, `cpp-rubric.md`, `hints/`, `adr/` |
 | `.cursor/tutor/` | Answer keys and review checklists (tutor only) |

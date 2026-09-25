@@ -22,7 +22,10 @@ principles as a learning and showcase project:
    it's built this way (30 min).
 2. [`docs/course-guide.md`](docs/course-guide.md): how the curriculum,
    milestones, tests, hints, and tutor fit together.
-3. [`docs/roadmap.md`](docs/roadmap.md): start at M0.
+3. [`docs/framework.md`](docs/framework.md): the tooling around the engine:
+   the Lima VM, build presets, test harness, benchmarks, tracing tools, and
+   the AI tutor layer (Cursor, OpenCode, or none).
+4. [`docs/roadmap.md`](docs/roadmap.md): start at M0.
 
 ## Architecture
 
@@ -86,7 +89,9 @@ include/strata/   public API        src/       engine modules (util fs db table 
 tests/            spec per milestone + MemFileSystem power-loss simulator
 bench/ tools/     benchmarks, CLI, dumpers, crash test, milestone gate
 curriculum/       OS fundamentals for storage (filesystems → io_uring → SSDs) with labs
-docs/             design, roadmap, C++ rubric, hints, ADRs
+docs/             primer, course guide, framework, design, roadmap, C++ rubric, hints, ADRs
+lima/             Linux VM definition (io_uring, O_DIRECT, dm-flakey, tracing)
+.cursor/ .opencode/ opencode.json   AI tutor rules + commands (Cursor, OpenCode)
 ```
 
 ## Results
